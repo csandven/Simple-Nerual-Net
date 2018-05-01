@@ -2,7 +2,13 @@
 import Neuron from './neuron'
 
 export default class Network {
-	
+
+	/**
+	 * Prepares the neurons for the network. Either from regular invokation like: new Network([2,3,1])
+	 * or pass in another Network class to `clone` it
+	 * @param  {array | Network} layers
+	 *
+	 */
 	constructor (layers) {
 		if (layers instanceof Network) {
 			this.neurons = Object.assign([], layers.neurons)
@@ -26,6 +32,9 @@ export default class Network {
 		}
 	}
 
+	/**
+	 * Adds a hidden layer to the network with one neuron in it
+	 */
 	addHiddenLayer () {
 		const outputLayer = this.neurons.splice(-1),
 			  newNeuron = new Neuron(this.neurons.length)
@@ -36,6 +45,10 @@ export default class Network {
 		this.recalculateWeigths(this.neurons.length - 1)
 	}
 
+	/**
+	 * Adds one neuron to a layer of choice
+	 * @param {int} layer  	the layer index
+	 */
 	addNeuron (layer) {
 		const neuron = new Neuron(layer)
 		neuron.initializeWeights(this.neurons[layer - 1])
@@ -43,12 +56,20 @@ export default class Network {
 		this.recalculateWeigths(layer + 1)
 	}
 
+	/**
+	 * Recalculates the weights for a given layer
+	 * @param  {int} layer  the layer index
+	 */
 	recalculateWeigths (layer) {
 		for (var i = 0; i < this.neurons[layer].length; i++) {
 			this.neurons[layer][i].initializeWeights(this.neurons[layer - 1])
 		}
 	}
 
+	/**
+	 * Feed-forward algorithm
+	 * @param  {...[int]} args
+	 */
 	input (...args) {
 		if (args.length !== this.neurons[0].length)
 			throw new Error('Number of passed inputs must match the number of input neurons')
@@ -66,6 +87,10 @@ export default class Network {
 		}
 	}
 
+	/**
+	 * Prepares the output for the network
+	 * @return {int} 
+	 */
 	output () {
 		const lastLayer = this.neurons[this.neurons.length - 1]
 
@@ -81,6 +106,11 @@ export default class Network {
 		return out
 	}
 
+	/**
+	 * Returns the output from a layer
+	 * @param  {array} layer   array of neurons
+	 * @return {array}
+	 */
 	getLayerOutput (layer) {
 		if (!layer)
 			throw new Error('A valid layer needs to be passed to get the outputs')
@@ -92,14 +122,23 @@ export default class Network {
 		return outputs
 	}
 
+	/**
+	 * Clones the network
+	 * @return {Network}
+	 */
 	copy () {
 		return new Network(this)
 	}
 
+	/**
+	 * Returns the `brain` of the network
+	 * @return {array}
+	 */
 	getJson () {
 		return this.neurons
 	}
 
+	// OBS: Experimental. Do not use
 	fromJson (json) {
 		// Setup the layers
 		for (var i = 0; i < json.length; i++) {
@@ -112,12 +151,6 @@ export default class Network {
 				this.neurons[i].push(neuron)
 			}
 		}
-	}
-
-	static newNeuron (layerIndex, bird) {
-		const neuron = new Neuron(layerIndex)
-		neuron.initializeWeights(bird.brain.neurons[layerIndex - 1])
-		return neuron
 	}
 
 }
