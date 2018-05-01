@@ -2,7 +2,7 @@
 import Neuron from './neuron'
 
 export default class Network {
-
+	
 	constructor (layers) {
 		if (layers instanceof Network) {
 			this.neurons = Object.assign([], layers.neurons)

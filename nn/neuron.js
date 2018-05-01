@@ -1,4 +1,4 @@
-import { random } from '../utilities/maths'
+import { random } from './utilities'
 
 export default class Neuron {
 	
@@ -14,7 +14,7 @@ export default class Neuron {
 	initializeWeights (layer) {
 		this.weights = []
 		for (var i = 0; i < layer.length; i++) {
-			this.weights.push(+random(-2, 2).toFixed(2))
+			this.weights.push(+random(-2, 2).toFixed(4))
 		}
 	}
 
