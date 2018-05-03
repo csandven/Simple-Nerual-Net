@@ -1,5 +1,6 @@
 
 import Neuron from './neuron'
+import BackPropagation from './backpropagation'
 
 export default class Network {
 
@@ -104,6 +105,39 @@ export default class Network {
 		}
 
 		return out
+	}
+
+	/**
+	 * Uses backpropagation to train the neural network
+	 * @param  {array} inputData 
+	 * @param  {array} outputData
+	 */
+	train (inputData, outputData) {
+		this.input.apply(this, inputData)
+		const answer = this.output()
+
+		const errors = BackPropagation.findError(answer, outputData)
+		console.log('ERRORS',answer, errors)
+		for (var l = this.neurons.length - 1; l > 1; l--) {
+			const gradients = BackPropagation.findGradients(answer, errors, .70),
+				  deltas = BackPropagation.findDeltas(gradients, this.neurons[l])
+
+			this.adjustWeights(l, deltas)
+			this.adjustBiases(l, gradients)
+		}
+	}
+
+	adjustWeights (layer, values) {
+		for (var i = 0; i < this.neurons[layer].length; i++) 
+			for (var j = 0; j < this.neurons[layer][i].weights.length; j++) {
+				console.log('Adjusting weight from ', this.neurons[layer][i].weights[j], 'to', this.neurons[layer][i].weights[j] += values[j])
+				this.neurons[layer][i].weights[j] += values[j]
+			}
+	}
+
+	adjustBiases (layer, values) {
+		for (var i = 0; i < this.neurons[layer].length; i++) 
+			this.neurons[layer][i].bias += values[i]
 	}
 
 	/**
